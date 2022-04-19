@@ -19,9 +19,6 @@ if [[ -z "$KAFKA_PORT" ]]; then
     export KAFKA_PORT=9092
 fi
 
-create-topics.sh &
-unset KAFKA_CREATE_TOPICS
-
 if [[ -z "$KAFKA_ADVERTISED_PORT" && \
   -z "$KAFKA_LISTENERS" && \
   -z "$KAFKA_ADVERTISED_LISTENERS" && \
@@ -140,6 +137,7 @@ echo "" >> "$KAFKA_HOME/config/server.properties"
             updateConfig "$log4j_name" "${!env_var}" "$KAFKA_HOME/config/log4j.properties"
         fi
     done
+    IFS=$ORIG_IFS
 )
 
 if [[ -n "$CUSTOM_INIT_SCRIPT" ]] ; then
