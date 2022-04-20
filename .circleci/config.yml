@@ -31,6 +31,16 @@ jobs:
           command: |
             docker build -t kafka:dev .
 
+      - run: 
+          name: check it launches
+          command: | 
+            sudo apt update
+            sudo apt-get install kafkacat
+            docker-compose up -d
+            echo "Hi" | kafkacat -b localhost:9092  -t "topic" -P
+            kafkacat -b localhost:9092  -t "topic" -C -c 1 2>&1 | grep "Hi"
+
+
 workflows:
   build:
     jobs:
