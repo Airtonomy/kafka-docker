@@ -1,0 +1,40 @@
+version: 2.1
+
+executors:
+  docker_builder:
+    parameters:
+      resource_class:
+        type: string
+        default: medium
+      image:
+        type: string
+        default: ubuntu-2004:202101-01
+    machine:
+      image: << parameters.image >>
+      docker_layer_caching: true
+    resource_class: << parameters.resource_class >>
+
+jobs:
+  build-images:
+    parameters:
+      resource_class:
+        type: string
+    executor:
+      name: docker_builder
+      resource_class: << parameters.resource_class >>
+    
+    steps:
+      - checkout
+      - run: uname -a
+      - run:
+          name: build the image
+          command: |
+            docker build -t kafka:dev .
+
+workflows:
+  build:
+    jobs:
+      - build-images:
+          matrix:
+            parameters:
+              resource_class: [medium, arm.medium]
